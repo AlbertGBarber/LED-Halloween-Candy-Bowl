@@ -29,6 +29,13 @@
 #define BUTTONS_ENABLE  false
 #define EEPROM_ENABLE   false
 
+//enable to test the RGB order of the pixels
+//will cycle the strip through the halloween pallet
+//the first color should be purple, if it isn't
+//you need to change the stripType var to
+//NEO_RGB or NEO_GRB
+#define RGBCOLORTEST         false
+
 //total number of effects (change this if you add any!)
 #define NUM_EFFECTS     10
 
@@ -85,11 +92,11 @@ Ticker EEPROMcommiter; //timer for commiting data to EEPRROM
 //segment definitions
 //==================================================================================
 
-segmentSection sec0[] = {{0, 100}};
+segmentSection sec0[] = {{0, stripLength}};
 Segment segment0 = { SIZE(sec0), sec0, true };
 
-Segment *ringSegments_arr[] = { &segment0 };
-SegmentSet ringSegments = { SIZE(ringSegments_arr), ringSegments_arr };
+Segment *mainSegments_arr[] = { &segment0 };
+SegmentSet mainSegments = { SIZE(mainSegments_arr), mainSegments_arr };
 
 //==================================================================================
 
@@ -250,7 +257,10 @@ void setup() {
 //once the effect ends (either naturally or from a button press), we incremented effectIndex (as long as effectRota is set true)
 //and jump to the top of the main loop
 void loop() {
-
+  //for testing the order of the RGB bytes in the pixels
+  if(RGBCOLORTEST){
+    strip.crossFadeCycle(halloweenWavePattern, SIZE(halloweenWavePattern), halloweenPallet, 10, 50, 40);
+  }
   if (!effectsStop) { //if effectsStop is true, we won't display any effect
     direct = !direct;
     breakCurrentEffect = false;
